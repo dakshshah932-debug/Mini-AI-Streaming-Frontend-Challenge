@@ -1,13 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { Bot } from "lucide-react";
 
 function App() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
   const [tools, setTools] = useState([]);
-  const chatEndRef = useRef(null);
-  const [terminate, setterminate] = useState(false);
+  const [terminate, setTerminate] = useState(false);
   const terminateRef = useRef(terminate);
+  const chatEndRef = useRef(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,7 +26,6 @@ function App() {
     try {
       const res = await fetch("https://intern-test-frontend-mbcr.onrender.com/tools");
       const data = await res.json();
-      console.log("Available tools:", data);
       setTools(data.tools || []);
     } catch (err) {
       console.error("Failed to fetch tools:", err);
@@ -33,8 +33,7 @@ function App() {
   }
 
   async function handleTerminate() {
-    setterminate(true);
-    console.log("Terminate clicked");
+    setTerminate(true);
     setLoading(false);
     setMessages((prev) => [
       ...prev,
@@ -44,7 +43,7 @@ function App() {
 
   async function handleSend() {
     if (!input.trim()) return;
-    setterminate(false);
+    setTerminate(false);
     setLoading(true);
     const newMsg = { type: "user", text: input, timestamp: new Date() };
     setMessages((prev) => [...prev, newMsg]);
@@ -66,10 +65,7 @@ function App() {
 
     while (true) {
       const { done, value } = await reader.read();
-      if (terminateRef.current) {
-        console.log("Terminated manually");
-        break;
-      }
+      if (terminateRef.current) break;
       if (done) break;
 
       const chunk = decoder.decode(value);
@@ -120,122 +116,114 @@ function App() {
   }
 
   return (
-    <div className="flex bg-gradient-to-b from-gray-900 via-gray-800 to-yellow-900 min-h-screen">
-    
-      <div className="flex-1 flex flex-col items-center justify-center p-4">
-        <div className="title text-6xl sm:text-8xl font-extrabold mb-6 flex justify-center items-center">
-          <span className="text-gray-500">&lt;</span>
-          <span className="bg-gradient-to-r from-gray-500 to-yellow-400 bg-clip-text text-transparent animate-text-gradient">
-            CHATBOT
-          </span>
-          <span className="text-yellow-400">/&gt;</span>
-        </div>
-
-        
-        <div className="w-full max-w-2xl flex flex-col bg-gray-900 shadow-lg rounded-2xl h-[80vh]">
-          
-          <div
-            className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-gray-900"
-            style={{ scrollbarWidth: "thin", scrollbarColor: "#facc15 #1f2937" }}
-          >
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex flex-col ${
-                  msg.type === "user" ? "items-end" : "items-start"
-                }`}
-              >
-                <div
-                  className={`px-4 py-2 rounded-lg max-w-[80%] break-words shadow-sm ${
-                    msg.type === "user"
-                      ? "bg-blue-600 text-white rounded-br-none"
-                      : msg.type === "ai"
-                      ? "bg-gray-800 text-gray-200 rounded-bl-none"
-                      : "bg-yellow-500 text-black rounded-lg"
-                  }`}
-                >
-                  {msg.text}
-                </div>
-                <span className="text-xs text-gray-400 mt-1">
-                  {msg.timestamp.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
+    <div className="flex h-screen bg-[#0d1117] text-white">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-gray-800 bg-[#0d1117] p-4 flex flex-col">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="bg-yellow-500 p-2 rounded-md">
+            <Bot className="w-6 h-6 text-gray-900" />
           </div>
-
-          
-          <div className="flex border-t border-gray-700 p-3 justify-center items-center">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border border-gray-700 rounded-lg bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            {!loading ? (
-              <button
-                onClick={handleSend}
-                type="button"
-                className="ml-3 mt-2 text-black cursor-pointer bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 hover:bg-gradient-to-br shadow-lg shadow-yellow-500/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2.5 transition-colors duration-300 focus:outline-none"
-              >
-                Send
-              </button>
-            ) : (
-              <button
-                onClick={handleTerminate}
-                type="button"
-                className="ml-4 py-2.5 px-5 me-2 text-sm font-medium text-gray-900 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700 hover:text-yellow-400 inline-flex items-center transition-all duration-300"
-              >
-                <svg
-                  aria-hidden="true"
-                  role="status"
-                  className="inline w-4 h-4 me-3 text-yellow-400 animate-spin"
-                  viewBox="0 0 100 101"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50..."
-                    fill="currentColor"
-                  />
-                </svg>
-                Loading...
-              </button>
-            )}
+          <div>
+            <h1 className="font-semibold text-lg">AI Assistant</h1>
+            <p className="text-xs text-gray-400">Always here to help</p>
           </div>
         </div>
-      </div>
 
-      
-         <div className="w-64 bg-gray-900 text-gray-200 p-4 rounded-l-2xl shadow-inner border-l border-yellow-400 flex flex-col justify-start">
-        <h2 className="text-xl font-bold text-yellow-400 mb-3 text-center">
-          🧰 Available Tools
-        </h2>
-        <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-gray-800">
-          {tools && tools.length > 0 ? (
+        <h2 className="text-yellow-400 font-semibold mb-3 text-center">🧰 Tools</h2>
+        <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-yellow-500 scrollbar-track-gray-900">
+          {tools.length > 0 ? (
             tools.map((tool, i) => (
-              
               <div
                 key={i}
-                className="bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
+                className="bg-gray-800 hover:bg-gray-700 px-3 py-2 rounded-lg transition text-sm"
               >
                 {tool.name || `Tool ${i + 1}`}
               </div>
             ))
           ) : (
-            <p className="text-sm text-gray-400 text-center">No tools found</p>
+            <p className="text-gray-500 text-sm text-center">No tools found</p>
           )}
-        
-
-
-
         </div>
-      </div>
+      </aside>
 
+      {/* Chat Section */}
+      <main className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="border-b border-gray-800 p-4 flex-shrink-0">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-400 to-yellow-400 bg-clip-text text-transparent text-center">
+            AI Assistant
+          </h1>
+        </div>
+
+        {/* Messages container */}
+        <div className="flex-1 p-6 flex flex-col gap-4 messages-scrollbar">
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm ${
+                  msg.type === "user"
+                    ? "bg-yellow-500 text-gray-900 rounded-br-none"
+                    : msg.type === "ai"
+                    ? "bg-gray-800 text-gray-100 rounded-bl-none"
+                    : "bg-gray-700 text-yellow-400"
+                }`}
+              >
+                {msg.text}
+                <div className="text-xs text-gray-400 mt-1 text-right">
+                  {msg.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                </div>
+              </div>
+            </div>
+          ))}
+          <div ref={chatEndRef} />
+        </div>
+
+        {/* Input (sticky bottom) */}
+        <div className="border-t border-gray-800 p-4 flex-shrink-0 flex items-center gap-3">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 bg-transparent border border-gray-700 rounded-lg px-4 py-2 text-sm placeholder-gray-500 focus:ring-2 focus:ring-yellow-500 outline-none"
+          />
+          {!loading ? (
+            <button
+              onClick={handleSend}
+              className="bg-yellow-500 cursor-pointer hover:bg-yellow-400 text-gray-900 font-medium px-5 py-2 rounded-lg transition"
+            >
+              Send
+            </button>
+          ) : (
+            <button
+              onClick={handleTerminate}
+              className="bg-gray-800 cursor-pointer border border-gray-700 text-yellow-400 font-medium px-5 py-2 rounded-lg flex items-center gap-2"
+            >
+              <svg
+                className="w-4 h-4 animate-spin text-yellow-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+              Stop
+            </button>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
