@@ -26,7 +26,7 @@ function App() {
       const res = await fetch("https://intern-test-frontend-mbcr.onrender.com/tools");
       const data = await res.json();
       console.log("Available tools:", data);
-      setTools(data.tools || []); // assuming { tools: [...] }
+      setTools(data.tools || []);
     } catch (err) {
       console.error("Failed to fetch tools:", err);
     }
@@ -121,7 +121,7 @@ function App() {
 
   return (
     <div className="flex bg-gradient-to-b from-gray-900 via-gray-800 to-yellow-900 min-h-screen">
-      {/* Left side - Chat Section */}
+    
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="title text-6xl sm:text-8xl font-extrabold mb-6 flex justify-center items-center">
           <span className="text-gray-500">&lt;</span>
@@ -131,9 +131,9 @@ function App() {
           <span className="text-yellow-400">/&gt;</span>
         </div>
 
-        {/* Chat Box */}
+        
         <div className="w-full max-w-2xl flex flex-col bg-gray-900 shadow-lg rounded-2xl h-[80vh]">
-          {/* Chat messages */}
+          
           <div
             className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-gray-900"
             style={{ scrollbarWidth: "thin", scrollbarColor: "#facc15 #1f2937" }}
@@ -167,7 +167,7 @@ function App() {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Input box */}
+          
           <div className="flex border-t border-gray-700 p-3 justify-center items-center">
             <input
               type="text"
@@ -210,26 +210,7 @@ function App() {
         </div>
       </div>
 
-      {/* Tools Section */}
-      {/* <div className="w-64 bg-gray-900 text-gray-200 p-4 rounded-l-2xl shadow-inner border-l border-yellow-400 flex flex-col justify-start">
-        <h2 className="text-xl font-bold text-yellow-400 mb-3 text-center">
-          🧰 Available Tools
-        </h2>
-        <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-gray-800">
-          {tools && tools.length > 0 ? (
-            tools.map((tool, i) => (
-              <div
-                key={i}
-                className="bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-700 transition"
-              >
-                {tool.name || `Tool ${i + 1}`}
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-gray-400 text-center">No tools found</p>
-          )}
-        </div>
-      </div> */}
+      
          <div className="w-64 bg-gray-900 text-gray-200 p-4 rounded-l-2xl shadow-inner border-l border-yellow-400 flex flex-col justify-start">
         <h2 className="text-xl font-bold text-yellow-400 mb-3 text-center">
           🧰 Available Tools
