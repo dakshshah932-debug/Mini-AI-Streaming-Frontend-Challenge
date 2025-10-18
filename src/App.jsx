@@ -154,9 +154,9 @@ function App() {
             AI Assistant
           </h1>
         </div>
-
+   
         {/* Messages container */}
-        <div className="flex-1 p-6 flex flex-col gap-4 messages-scrollbar">
+        <div className="flex-1 p-6 flex flex-col gap-4 messages-scrollbar min-h-[80vh]">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
               <div
